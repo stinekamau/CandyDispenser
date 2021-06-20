@@ -12,6 +12,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -28,11 +32,13 @@ public class CandyIssue extends Application {
         //Initialize the stack
         Stack<Ellipse> stack=new Stack<>();
 
+
         //Initalize the containers
         Group widgets=new Group();
         VBox cont=new VBox();
         HBox lowerPanel=new HBox();
         BorderPane mjr=new BorderPane();
+        VBox display=new VBox();
 
         lowerPanel.setSpacing(10);
 
@@ -48,11 +54,17 @@ public class CandyIssue extends Application {
         Button empty=new Button("IsEmpty()");
         empty.setPrefSize(70,30);
 
-        //create the label
-        Label target=new Label();
+        Label tgt=new Label();
+        Label empt=new Label();
+        empt.setFont(Font.font("Lucida Sans Unicode",FontWeight.BOLD,FontPosture.ITALIC,30));
+
+
+        tgt.setFont(Font.font("Lucida Sans Unicode",FontWeight.BOLD,FontPosture.ITALIC,30));
+        display.getChildren().addAll(tgt,empt);
 
 
         lowerPanel.getChildren().addAll(size,pop,push,top,empty);
+
 
         Rectangle topRect=new Rectangle(100,140,300,400);
         Rectangle bottomRect=new Rectangle(100,431,300,250);
@@ -87,7 +99,7 @@ public class CandyIssue extends Application {
         l12.setStroke(Color.WHITE);l12.setStrokeWidth(3);
 
 
-        List<Line> lines=new ArrayList<>();
+        List<Line> lines;
         lines= Arrays.asList(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12);
         l1.setFill(Color.RED);
 
@@ -97,7 +109,6 @@ public class CandyIssue extends Application {
         widgets.getChildren().add(bottomRect);
         widgets.getChildren().addAll(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12);
         ArrayList<Ellipse> ovalist=createEllipse();
-//        ArrayList<Ellipse> templist= (ArrayList<Ellipse>) ovalist.clone();
         LinkedList<Ellipse> templist=new LinkedList<>(ovalist);
 
 
@@ -106,17 +117,13 @@ public class CandyIssue extends Application {
             widgets.getChildren().add(el);
             stack.add(el);
         }
-//        for(int i=0;i<ovalist.size()-1;i--)
-//        {
-//            stack.add(ovalist.get(i));
-//
-//        }
+
         Stack<Ellipse> hpop=new Stack<>();
 
 
 
-//        widgets.getChildren().add(lowerPanel);
-//        cont.getChildren().addAll(target,widgets,lowerPanel);
+
+        mjr.setTop(display);
         mjr.setCenter(widgets);
         mjr.setRight(lowerPanel);
 
@@ -126,25 +133,50 @@ public class CandyIssue extends Application {
         List<Line> finalLines = lines;
         LinkedList<Ellipse> allovals=new LinkedList<>(ovalist);
         final int[] count = {-1};
-//        EventHandler<ActionEvent> popper = new EventHandler<ActionEvent>() {
-//            public void handle(ActionEvent e)
-//            {
-//                count[0]++;
+
+        size.setOnAction(e->
+        {
+            tgt.setText("Stack Size: "+stack.size());
+
+        });
+
+        empty.setOnAction(e->
+        {
+            Boolean em=stack.isEmpty();
+            empt.setText("Is Empty: "+em);
+
+        });
+
+        top.setOnAction(e->
+        {
+            Ellipse temp=stack.peek();
+            temp.setFill(Color.BLUE);
+            temp.setStroke(Color.PINK);
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException interruptedException) {
+//                interruptedException.printStackTrace();
 //            }
-//        };
+
+//            temp.setFill(Color.RED);
+
+
+        });
 
         push.setOnAction(e->
         {
 
             if(!hpop.isEmpty())
             {
+                if(count[0]==5)
+                    count[0]=-1;
                 count[0]++;
 
 
                 System.out.println("Value of count is: "+count[0]);
                 Ellipse ell=hpop.pop();
                 Ellipse orell=ovalist.get(5-count[0]);
-                templist.remove(5-count[0]);
+//                templist.remove(5-count[0]);
 
 
 
@@ -154,44 +186,38 @@ public class CandyIssue extends Application {
 //                path.getElements().add(new CubicCurveTo(100f,30f,180f,30f,orell.getCenterX(),orell.getCenterX()));
                 path.getElements().add(new CubicCurveTo(350,0f,180f,30f,450,70));
                 Ellipse temp=new Ellipse(orell.getCenterX(),orell.getCenterY(),orell.getRadiusX(),orell.getRadiusY());
-                widgets.getChildren().add(temp);
-                temp.setFill(Color.GRAY);
-                temp.setStroke(Color.GOLD);
-                temp.setStrokeWidth(3);
+
 
 
 //            ell.setRadiusX(orell.getRadiusX());
 //            ell.setRadiusY(orell.getRadiusY());
                 fallOvals(templist);
-
-
-
                 decreaseSpringSize(finalLines);
 
                 //Instantiate the path transition
                 PathTransition ptr=new PathTransition();
-                ptr.setDuration(Duration.millis(3500));
+                ptr.setDuration(Duration.millis(500));
                 ptr.setNode(ell);
                 ptr.setPath(path);
                 ptr.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
                 ptr.play();
 
                 FadeTransition fd=new FadeTransition();
-                fd.setDuration(Duration.millis(2500));
+                fd.setDuration(Duration.millis(10));
                 fd.setFromValue(1);fd.setToValue(0.001);
                 fd.setNode(ell);
                 fd.play();
 
+                temp.setFill(Color.RED);
+                temp.setStroke(Color.GREEN);
+                temp.setStrokeWidth(3);
+                stack.add(temp);
+//                hpop.add(temp);
+
+                widgets.getChildren().add(temp);
+
+
             }
-
-
-
-
-
-
-
-
-
 
         });
 
@@ -228,16 +254,7 @@ public class CandyIssue extends Application {
 
 
             }
-
-
-
-
-
-
         });
-
-
-
 
 
         Scene sc=new Scene(mjr);
