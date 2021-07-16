@@ -2,6 +2,8 @@ package com.company;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PathTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -58,18 +60,11 @@ public class CandyIssue extends Application {
         Label empt=new Label();
         empt.setFont(Font.font("Lucida Sans Unicode",FontWeight.BOLD,FontPosture.ITALIC,30));
 
-
         tgt.setFont(Font.font("Lucida Sans Unicode",FontWeight.BOLD,FontPosture.ITALIC,30));
         display.getChildren().addAll(tgt,empt);
-
-
         lowerPanel.getChildren().addAll(size,pop,push,top,empty);
-
-
-        Rectangle topRect=new Rectangle(100,140,300,400);
+        Rectangle topRect=new Rectangle(100,180,300,400);
         Rectangle bottomRect=new Rectangle(100,431,300,250);
-
-
         //set the lines and the corresponding strokes
         Line l1=new Line(100,451,400,450);
         l1.setStroke(Color.WHITE);l1.setStrokeWidth(3);
@@ -98,36 +93,30 @@ public class CandyIssue extends Application {
         Line l13=new Line(100,690,400,720);
         l12.setStroke(Color.WHITE);l12.setStrokeWidth(3);
 
-
         List<Line> lines;
         lines= Arrays.asList(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12);
         l1.setFill(Color.RED);
-
-
-
         widgets.getChildren().add(topRect);
         widgets.getChildren().add(bottomRect);
         widgets.getChildren().addAll(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12);
         ArrayList<Ellipse> ovalist=createEllipse();
         LinkedList<Ellipse> templist=new LinkedList<>(ovalist);
-
+        ArrayList<ArrayList<Double>> tp=new ArrayList<>();
 
         for(Ellipse el: ovalist)
         {
+            ArrayList<Double> tem=new ArrayList<>();
             widgets.getChildren().add(el);
             stack.add(el);
+            tem.add(el.getCenterX());
+            tem.add(el.getCenterY());
+            tp.add(tem);
         }
-
         Stack<Ellipse> hpop=new Stack<>();
-
-
-
 
         mjr.setTop(display);
         mjr.setCenter(widgets);
         mjr.setRight(lowerPanel);
-
-
 
         //set the action events of the button
         List<Line> finalLines = lines;
@@ -145,6 +134,7 @@ public class CandyIssue extends Application {
             Boolean em=stack.isEmpty();
             empt.setText("Is Empty: "+em);
 
+
         });
 
         top.setOnAction(e->
@@ -152,15 +142,13 @@ public class CandyIssue extends Application {
             Ellipse temp=stack.peek();
             temp.setFill(Color.BLUE);
             temp.setStroke(Color.PINK);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException interruptedException) {
-//                interruptedException.printStackTrace();
-//            }
-
-//            temp.setFill(Color.RED);
-
-
+            PauseTransition wait = new PauseTransition(Duration.millis(1000));
+            wait.play();
+            wait.setOnFinished(t->
+            {
+                temp.setFill(Color.GRAY);
+                temp.setStroke(Color.GOLD);
+            });
         });
 
         push.setOnAction(e->
@@ -168,56 +156,34 @@ public class CandyIssue extends Application {
 
             if(!hpop.isEmpty())
             {
-                if(count[0]==5)
-                    count[0]=-1;
-                count[0]++;
-
-
-                System.out.println("Value of count is: "+count[0]);
+                fallOvals(stack);
                 Ellipse ell=hpop.pop();
-                Ellipse orell=ovalist.get(5-count[0]);
-//                templist.remove(5-count[0]);
+
+                System.out.println("In push Current destination  X: "+ell.getCenterX()+" Y is "+ell.getCenterY());
+
+//                Ellipse orell=tp.get(5-count[0]);
+                stack.add(ell);
+                Double y=tp.get(3-count[0]).get(1);
+//                fallOvals(templist);
+//                decreaseSpringSize(finalLines);
+                TranslateTransition revfirst=new TranslateTransition(Duration.millis(500),ell);
+                TranslateTransition revsecond=new TranslateTransition(Duration.millis(500),ell);
+                TranslateTransition revthird=new TranslateTransition(Duration.millis(500),ell);
 
 
-
-
-                Path path=new Path();
-                path.getElements().add(new MoveTo(700f,500f));
-//                path.getElements().add(new CubicCurveTo(100f,30f,180f,30f,orell.getCenterX(),orell.getCenterX()));
-                path.getElements().add(new CubicCurveTo(350,0f,180f,30f,450,70));
-                Ellipse temp=new Ellipse(orell.getCenterX(),orell.getCenterY(),orell.getRadiusX(),orell.getRadiusY());
-
-
-
-//            ell.setRadiusX(orell.getRadiusX());
-//            ell.setRadiusY(orell.getRadiusY());
-                fallOvals(templist);
-                decreaseSpringSize(finalLines);
-
-                //Instantiate the path transition
-                PathTransition ptr=new PathTransition();
-                ptr.setDuration(Duration.millis(500));
-                ptr.setNode(ell);
-                ptr.setPath(path);
-                ptr.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                ptr.play();
-
-                FadeTransition fd=new FadeTransition();
-                fd.setDuration(Duration.millis(10));
-                fd.setFromValue(1);fd.setToValue(0.001);
-                fd.setNode(ell);
-                fd.play();
-
-                temp.setFill(Color.RED);
-                temp.setStroke(Color.GREEN);
-                temp.setStrokeWidth(3);
-                stack.add(temp);
-//                hpop.add(temp);
-
-                widgets.getChildren().add(temp);
-
-
+                revfirst.setByY(-500);
+                revsecond.setByX(-400);
+                revthird.setByY(200);
+                revfirst.setOnFinished(q->
+                {
+                    revsecond.setOnFinished(w->
+                    {
+                        revthird.play();
+                    });revsecond.play();
+                });revfirst.play();
+                System.out.println("In push later destination  X: "+ell.getCenterX()+" Y is "+ell.getCenterY());
             }
+//            fallOvals(stack);
 
         });
 
@@ -225,34 +191,22 @@ public class CandyIssue extends Application {
         {
             if(!stack.isEmpty())
             {
+                count[0]++;
+                if(count[0]==4)
+                    count[0]=-1;
+
                 Ellipse certain=stack.pop();
-                allovals.remove(certain);
-                Path path=new Path();
-                path.getElements().add(new MoveTo(certain.getCenterX(),certain.getCenterY()));
-                path.getElements().add(new CubicCurveTo(250f,0f,300,10f,700f,500f));
-
-                increaseSpringSize(finalLines);
-
-                //Instantiate the path transition
-                PathTransition ptr=new PathTransition();
-                ptr.setDuration(Duration.millis(3500));
-                ptr.setNode(certain);
-                ptr.setPath(path);
-                ptr.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-//            ptr.setCycleCount(50);
-                ptr.play();
-
-                FadeTransition fd=new FadeTransition();
-                fd.setDuration(Duration.millis(3000));
-                fd.setFromValue(1);fd.setToValue(0.001);
-                fd.setNode(certain);
-                fd.play();
-
+                System.out.println("Now in the pop value of x is "+certain.getCenterX()+" value of y is "+certain.getCenterY());
+                TranslateTransition first=new TranslateTransition(Duration.millis(500),certain);
+                TranslateTransition second=new TranslateTransition(Duration.millis(500),certain);
+                TranslateTransition third=new TranslateTransition(Duration.millis(500),certain);
+                first.setByY(-200);
+                second.setByX(400);
+                third.setByY(500);
+                first.setOnFinished(g->{second.setOnFinished(h->{third.play();});second.play();});
+                first.play();
                 hpop.add(certain);
-
-                riseOvals(allovals);
-
-
+                riseOvals(stack);
             }
         });
 
@@ -261,14 +215,12 @@ public class CandyIssue extends Application {
         primaryStage.setScene(sc);
         primaryStage.setTitle("Candy Dispenser");
         primaryStage.show();
-
-
     }
     ArrayList<Ellipse> createEllipse()
     {
-        int v=250;int v1=470;int v2=150;int v3=20;
+        int v=250;int v1=460;int v2=150;int v3=20;
         ArrayList<Ellipse> ovals=new ArrayList<>();
-        for(int i=0;i<6;i++)
+        for(int i=0;i<5;i++)
         {
             v1-=50;
             ovals.add(new Ellipse(v,v1,v2,v3));
@@ -278,12 +230,9 @@ public class CandyIssue extends Application {
 
         }
         return ovals;
-
-
     }
-    void riseOvals(LinkedList<Ellipse> arr)
+    void riseOvals(Stack<Ellipse> arr)
     {
-
         for(Ellipse ert:arr)
         {
             ert.setCenterY(ert.getCenterY()-38.0);
@@ -292,7 +241,7 @@ public class CandyIssue extends Application {
 
     }
 
-    void fallOvals(LinkedList<Ellipse> arr)
+    void fallOvals(Stack<Ellipse> arr)
     {
         for(Ellipse ert:arr)
         {
@@ -307,26 +256,18 @@ public class CandyIssue extends Application {
 
         for(int i=0;i<ls.size();i++)
         {
-
-
             ls.get(i).setEndY(ls.get(i).getEndY()-36.0);
             ls.get(i).setStartY(ls.get(i).getStartY()-36.0);
-
         }
 
     }
-
     void decreaseSpringSize(List<Line> ls)
     {
         for(int i=0;i<ls.size();i++)
         {
-
-
             ls.get(i).setEndY(ls.get(i).getEndY()+36.0);
             ls.get(i).setStartY(ls.get(i).getStartY()+36.0);
-
         }
-
 
     }
 
