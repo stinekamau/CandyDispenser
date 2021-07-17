@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -20,6 +21,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 import java.util.*;
 
@@ -183,7 +186,17 @@ public class CandyIssue extends Application {
                 });revfirst.play();
                 System.out.println("In push later destination  X: "+ell.getCenterX()+" Y is "+ell.getCenterY());
             }
+            else
+            {
+                Alert alert2 = new Alert(AlertType.NONE,  "The candy dispenser is Full",
+                        ButtonType.CLOSE, ButtonType.OK);
+                alert2.setAlertType(AlertType.ERROR);
+
+
+                alert2.show();
+            }
 //            fallOvals(stack);
+            decreaseSpringSize(lines);
 
         });
 
@@ -196,7 +209,7 @@ public class CandyIssue extends Application {
                     count[0]=-1;
 
                 Ellipse certain=stack.pop();
-                System.out.println("Now in the pop value of x is "+certain.getCenterX()+" value of y is "+certain.getCenterY());
+                System.out.println("Now in the pop value of x i{s "+certain.getCenterX()+" value of y is "+certain.getCenterY());
                 TranslateTransition first=new TranslateTransition(Duration.millis(500),certain);
                 TranslateTransition second=new TranslateTransition(Duration.millis(500),certain);
                 TranslateTransition third=new TranslateTransition(Duration.millis(500),certain);
@@ -207,7 +220,17 @@ public class CandyIssue extends Application {
                 first.play();
                 hpop.add(certain);
                 riseOvals(stack);
+                increaseSpringSize(lines);
+            }else
+            {
+                Alert alert = new Alert(AlertType.NONE,  "The candy dispenser is empty",
+                        ButtonType.CLOSE, ButtonType.OK);
+                alert.setAlertType(AlertType.ERROR);
+
+
+                alert.show();
             }
+
         });
 
 
