@@ -85,6 +85,8 @@ public class StackPointer {
             ls.get(i).setStartY(ls.get(i).getStartY()-36.0);
         }
 
+
+
     }
     private void decreaseSpring(List<Line> ls)
     {

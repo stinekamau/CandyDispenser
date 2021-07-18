@@ -66,7 +66,8 @@ public class CandyIssue extends Application {
         tgt.setFont(Font.font("Lucida Sans Unicode",FontWeight.BOLD,FontPosture.ITALIC,30));
         display.getChildren().addAll(tgt,empt);
         lowerPanel.getChildren().addAll(size,pop,push,top,empty);
-        Rectangle topRect=new Rectangle(100,180,300,400);
+        Rectangle topRect=new Rectangle(100,180
+                ,300,400);
         Rectangle bottomRect=new Rectangle(100,431,300,250);
         //set the lines and the corresponding strokes
         Line l1=new Line(100,451,400,450);
