@@ -1,7 +1,6 @@
 package com.company;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -27,41 +26,18 @@ import java.util.*;
 
 public class Cdyissv2 extends Application {
     int lines=11;
-    Stack<Line> poppedLines=new Stack<>();
+//    Stack<Line> poppedLines=new Stack<>();
+    List<Color> reqcol=Arrays.asList(Color.RED,Color.GREEN,Color.WHITE,Color.BLUE,Color.BLACK);
+    List<String> reqc=Arrays.asList("Red","Green","White","Blue","Black");
+
     public static void main(String[] args) {
         launch(args);
     }
-//    void increaseSpringSize(ArrayList<Line> lineList)
-//    {
-//        Double height=50.0/13;
-//
-//
-//        double startY;
-//        Line hold1 = lineList.get(0);
-//        hold1.setStartY(hold1.getStartY() - 35);
-//        hold1.setEndY(hold1.getEndY() - 35);
-////            poppedLines.add(hold1);
-//        startY = hold1.getStartY();
-//
-//        for (int i = 1; i < lineList.size()-1; i++) {
-//            Line line = lineList.get(i);
-//            line.setStartY(startY);
-//            line.setEndY(startY + lines);
-//            startY = line.getEndY();
-//            poppedLines.add(line);
-//        }
-//        lines += 5;
-//
-//
-//        Line base1 = lineList.get(lineList.size()-1);
-//        base1.setStartY(startY);
-//        poppedLines.add(base1);
-//    }
+
     @Override
     public void start(Stage primaryStage) {
         //Initialize the stack
         Stack<Ellipse> stack=new Stack<>();
-
 
         //Initalize the containers
         Group widgets=new Group();
@@ -93,7 +69,11 @@ public class Cdyissv2 extends Application {
         lowerPanel.getChildren().addAll(size,pop,push,top,empty);
         Rectangle topRect=new Rectangle(100,180
                 ,300,400);
+        topRect.setFill(Color.DARKCYAN);
+
         Rectangle bottomRect=new Rectangle(100,431,300,170);
+        bottomRect.setFill(Color.DARKCYAN);
+
         //set the lines and the corresponding strokes
         Line l1=new Line(100,451,400,450);
         l1.setStroke(Color.WHITE);l1.setStrokeWidth(3);
@@ -130,7 +110,6 @@ public class Cdyissv2 extends Application {
         widgets.getChildren().add(bottomRect);
         widgets.getChildren().addAll(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12);
         ArrayList<Ellipse> ovalist=createEllipse();
-        LinkedList<Ellipse> templist=new LinkedList<>(ovalist);
         ArrayList<ArrayList<Double>> tp=new ArrayList<>();
 
         for(Ellipse el: ovalist)
@@ -150,7 +129,6 @@ public class Cdyissv2 extends Application {
 
         //set the action events of the button
         List<Line> finalLines = lines;
-        LinkedList<Ellipse> allovals=new LinkedList<>(ovalist);
         final int[] count = {-1};
 
         size.setOnAction(e->
@@ -169,16 +147,29 @@ public class Cdyissv2 extends Application {
 
         top.setOnAction(e->
         {
-            Ellipse temp=stack.peek();
-            temp.setFill(Color.BLUE);
-            temp.setStroke(Color.PINK);
-            PauseTransition wait = new PauseTransition(Duration.millis(1000));
-            wait.play();
-            wait.setOnFinished(t->
+            if(stack.isEmpty())
             {
-                temp.setFill(Color.GRAY);
-                temp.setStroke(Color.GOLD);
-            });
+                Alert alert = new Alert(Alert.AlertType.NONE,  "The candy dispenser is empty",
+                        ButtonType.CLOSE, ButtonType.OK);
+                alert.setAlertType(Alert.AlertType.ERROR);
+
+
+                alert.show();
+
+            }
+            else
+            {
+                Ellipse temp=stack.peek();
+                int colorName=stack.size()-1;
+
+                Alert alert = new Alert(Alert.AlertType.NONE,  "The "+reqc.get(colorName)+" candy  is on Top",
+                        ButtonType.CLOSE, ButtonType.OK);
+                alert.setAlertType(Alert.AlertType.INFORMATION);
+
+
+                alert.show();
+
+            }
         });
 
         push.setOnAction(e->
@@ -194,8 +185,6 @@ public class Cdyissv2 extends Application {
 //                Ellipse orell=tp.get(5-count[0]);
                 stack.add(ell);
                 Double y=tp.get(3-count[0]).get(1);
-//                fallOvals(templist);
-//                decreaseSpringSize(finalLines);
                 TranslateTransition revfirst=new TranslateTransition(Duration.millis(500),ell);
                 TranslateTransition revsecond=new TranslateTransition(Duration.millis(500),ell);
                 TranslateTransition revthird=new TranslateTransition(Duration.millis(500),ell);
@@ -284,8 +273,8 @@ public class Cdyissv2 extends Application {
         {
             v1-=50;
             ovals.add(new Ellipse(v,v1,v2,v3));
-            ovals.get(i).setFill(Color.GRAY);
-            ovals.get(i).setStroke(Color.GOLD);
+            ovals.get(i).setFill(reqcol.get(i));
+            ovals.get(i).setStroke(Color.BLACK);
             ovals.get(i).setStrokeWidth(3);
 
         }
@@ -311,68 +300,50 @@ public class Cdyissv2 extends Application {
 
     }
 
-//    void increaseSpringSize(List<Line> ls)
-//    {
-//
-//        for(int i=0;i<ls.size();i++)
-//        {
-//            ls.get(i).setEndY(ls.get(i).getEndY()-36.0);
-//            ls.get(i).setStartY(ls.get(i).getStartY()-36.0);
-//        }
-//
-//    }
-void increaseSpringSize(ArrayList<Line> lineList)
-{
-    Double height=50.0/13;
 
-
-    double startY;
-    Line hold1 = lineList.get(0);
-    hold1.setStartY(hold1.getStartY() - 38);
-    hold1.setEndY(hold1.getEndY() - 38);
-//            poppedLines.add(hold1);
-    startY = hold1.getStartY();
-
-    for (int i = 1; i < lineList.size()-1; i++) {
-        Line line = lineList.get(i);
-        line.setStartY(startY);
-        line.setEndY(startY + lines);
-        startY = line.getEndY();
-        poppedLines.add(line);
-    }
-    lines += 6;
-
-
-    Line base1 = lineList.get(lineList.size()-1);
-    base1.setStartY(startY);
-    poppedLines.add(base1);
-}
-    void decreaseSpringSize(ArrayList<Line> lineList)
+    void increaseSpringSize(ArrayList<Line> lineList)
     {
-//        for(int i=0;i<ls.size();i++)
-//        {
-//            ls.get(i).setEndY(ls.get(i).getEndY()+36.0);
-//            ls.get(i).setStartY(ls.get(i).getStartY()+36.0);
-//        }
-        double startY;
-        Line hold1 = lineList.get(0);
-        hold1.setStartY(hold1.getStartY() + 38);
-        hold1.setEndY(hold1.getEndY() + 38);
-        poppedLines.add(hold1);
-        startY = hold1.getStartY();
+
+
+
+        double begin;
+        Line topLine = lineList.get(0);
+        topLine.setStartY(topLine.getStartY() - 41);
+        topLine.setEndY(topLine.getEndY() - 41);
+        begin = topLine.getStartY();
 
         for (int i = 1; i < lineList.size()-1; i++) {
             Line line = lineList.get(i);
-            line.setStartY(startY);
-            line.setEndY(startY + lines);
-            startY = line.getEndY();
-            poppedLines.add(line);
+            line.setStartY(begin);
+            line.setEndY(begin + lines);
+            begin = line.getEndY();
+        }
+        lines += 6;
+
+
+        Line bottomLine = lineList.get(lineList.size()-1);
+        bottomLine.setStartY(begin);
+//
+    }
+    void decreaseSpringSize(ArrayList<Line> lineList)
+    {
+
+        double begin;
+        Line topLine = lineList.get(0);
+        topLine.setStartY(topLine.getStartY() + 41);
+        topLine.setEndY(topLine.getEndY() + 41);
+        begin = topLine.getStartY();
+
+        for (int i = 1; i < lineList.size()-1; i++) {
+            Line line = lineList.get(i);
+            line.setStartY(begin);
+            line.setEndY(begin + lines);
+            begin = line.getEndY();
         }
         lines -= 6;
 
         Line base1 = lineList.get(lineList.size()-1);
-        base1.setStartY(startY);
-        poppedLines.add(base1);
+        base1.setStartY(begin);
     }
 
 
